@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WoW Gear Tracker</title>
     <style>
-        /* ... (keep the existing styles) ... */
         #saveButton {
             margin-top: 20px;
             padding: 10px;
@@ -13,6 +12,9 @@
             color: white;
             border: none;
             cursor: pointer;
+        }
+        #loginDiv {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -39,29 +41,68 @@
 
     <button id="saveButton">Save Data</button>
 
+    <div id="loginDiv">
+        <input type="email" id="loginEmail" placeholder="Email">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button id="loginButton">Login</button>
+        <button id="registerButton">Register</button>
+    </div>
+
+    <!-- Add Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+
     <script>
-        // ... (keep the existing constants and variables) ...
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        function createTable() {
-            // ... (keep the existing createTable function) ...
+        let currentSpec = null;
+        const table = document.getElementById('gearTable');
+        const specSelect = document.getElementById('specSelect');
+
+        const specializations = ["Fire Mage", "Shadow Priest"];  // Add all your specializations here
+
+        // Authentication functions
+        function login() {
+            var email = document.getElementById('loginEmail').value;
+            var password = document.getElementById('loginPassword').value;
+            firebase.auth().signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    console.log('Logged in');
+                    document.getElementById('loginDiv').style.display = 'none';
+                    loadData();
+                })
+                .catch((error) => {
+                    console.error('Error logging in:', error);
+                });
         }
 
-        function updateStatColor(select) {
-            // ... (keep the existing updateStatColor function) ...
+        function register() {
+            var email = document.getElementById('loginEmail').value;
+            var password = document.getElementById('loginPassword').value;
+            firebase.auth().createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    console.log('User registered');
+                    document.getElementById('loginDiv').style.display = 'none';
+                    loadData();
+                })
+                .catch((error) => {
+                    console.error('Error registering:', error);
+                });
         }
 
-        function updateTotals() {
-            // ... (keep the existing updateTotals function) ...
-        }
-
-        function highlightStatInput(input) {
-            // ... (keep the existing highlightStatInput function) ...
-        }
-
-        function clearRow(button) {
-            // ... (keep the existing clearRow function) ...
-        }
-
+        // Save data function
         function saveData() {
             if (!currentSpec) {
                 console.log("No specialization selected. Can't save data.");
@@ -72,43 +113,57 @@
             inputs.forEach(input => {
                 data[input.name] = input.value;
             });
-            try {
-                localStorage.setItem(currentSpec, JSON.stringify(data));
-                console.log(`Data saved for ${currentSpec}:`, data);
-            } catch (error) {
-                console.error("Error saving data:", error);
-            }
+
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    db.collection('users').doc(user.uid).collection('gearData').doc(currentSpec).set(data)
+                        .then(() => {
+                            console.log(`Data saved for ${currentSpec}:`, data);
+                        })
+                        .catch((error) => {
+                            console.error("Error saving data:", error);
+                        });
+                }
+            });
         }
 
+        // Load data function
         function loadData() {
             if (!currentSpec) {
                 console.log("No specialization selected. Can't load data.");
                 return;
             }
-            try {
-                const savedData = localStorage.getItem(currentSpec);
-                console.log(`Raw data loaded for ${currentSpec}:`, savedData);
-                const data = JSON.parse(savedData || '{}');
-                console.log(`Parsed data for ${currentSpec}:`, data);
-                const inputs = table.querySelectorAll('input, select');
-                inputs.forEach(input => {
-                    if (data[input.name]) {
-                        input.value = data[input.name];
-                        if (input.type === 'number') {
-                            highlightStatInput(input);
-                        }
-                    } else {
-                        if (input.type === 'number' || input.type === 'text') {
-                            input.value = '';
-                        } else if (input.type === 'select-one') {
-                            input.selectedIndex = 0;
-                        }
-                    }
-                });
-                updateTotals();
-            } catch (error) {
-                console.error("Error loading data:", error);
-            }
+
+            firebase.auth().onAuthStateChanged(user => {
+                if (user) {
+                    db.collection('users').doc(user.uid).collection('gearData').doc(currentSpec).get()
+                        .then((doc) => {
+                            if (doc.exists) {
+                                const data = doc.data();
+                                console.log(`Data loaded for ${currentSpec}:`, data);
+                                const inputs = table.querySelectorAll('input, select');
+                                inputs.forEach(input => {
+                                    if (data[input.name]) {
+                                        input.value = data[input.name];
+                                        if (input.type === 'number') {
+                                            highlightStatInput(input);
+                                        }
+                                    } else {
+                                        if (input.type === 'number' || input.type === 'text') {
+                                            input.value = '';
+                                        } else if (input.type === 'select-one') {
+                                            input.selectedIndex = 0;
+                                        }
+                                    }
+                                });
+                                updateTotals();
+                            }
+                        })
+                        .catch((error) => {
+                            console.error("Error loading data:", error);
+                        });
+                }
+            });
         }
 
         function loadSpecialization(spec) {
@@ -120,6 +175,26 @@
             createTable();
             loadData();
             document.title = `WoW Gear Tracker - ${spec}`;
+        }
+
+        function createTable() {
+            // Your existing createTable logic here
+        }
+
+        function updateStatColor(select) {
+            // Your existing updateStatColor logic here
+        }
+
+        function updateTotals() {
+            // Your existing updateTotals logic here
+        }
+
+        function highlightStatInput(input) {
+            // Your existing highlightStatInput logic here
+        }
+
+        function clearRow(button) {
+            // Your existing clearRow logic here
         }
 
         // Initialize table
@@ -161,6 +236,10 @@
             option.textContent = spec;
             specSelect.appendChild(option);
         });
+
+        // Add event listeners to login and register buttons
+        document.getElementById('loginButton').addEventListener('click', login);
+        document.getElementById('registerButton').addEventListener('click', register);
 
         console.log("Script initialized");
     </script>
