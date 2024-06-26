@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WoW Gear Tracker</title>
+    <style>
+        /* ... (keep the existing styles) ... */
+        #saveButton {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <select id="specSelect">
+        <option value="">Select Specialization</option>
+    </select>
+
+    <table id="gearTable">
+        <tr>
+            <th>Slot</th>
+            <th>Equipped</th>
+            <th>Ideal</th>
+            <th>Stat1</th>
+            <th>Stat2</th>
+            <th>AGI</th>
+            <th>Haste</th>
+            <th>Mastery</th>
+            <th>Crit</th>
+            <th>Vers</th>
+            <th>Action</th>
+        </tr>
+    </table>
+
+    <button id="saveButton">Save Data</button>
+
+    <script>
+        // ... (keep the existing constants and variables) ...
+
+        function createTable() {
+            // ... (keep the existing createTable function) ...
+        }
+
+        function updateStatColor(select) {
+            // ... (keep the existing updateStatColor function) ...
+        }
+
+        function updateTotals() {
+            // ... (keep the existing updateTotals function) ...
+        }
+
+        function highlightStatInput(input) {
+            // ... (keep the existing highlightStatInput function) ...
+        }
+
+        function clearRow(button) {
+            // ... (keep the existing clearRow function) ...
+        }
+
+        function saveData() {
+            if (!currentSpec) {
+                console.log("No specialization selected. Can't save data.");
+                return;
+            }
+            const data = {};
+            const inputs = table.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                data[input.name] = input.value;
+            });
+            try {
+                localStorage.setItem(currentSpec, JSON.stringify(data));
+                console.log(`Data saved for ${currentSpec}:`, data);
+            } catch (error) {
+                console.error("Error saving data:", error);
+            }
+        }
+
+        function loadData() {
+            if (!currentSpec) {
+                console.log("No specialization selected. Can't load data.");
+                return;
+            }
+            try {
+                const savedData = localStorage.getItem(currentSpec);
+                console.log(`Raw data loaded for ${currentSpec}:`, savedData);
+                const data = JSON.parse(savedData || '{}');
+                console.log(`Parsed data for ${currentSpec}:`, data);
+                const inputs = table.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    if (data[input.name]) {
+                        input.value = data[input.name];
+                        if (input.type === 'number') {
+                            highlightStatInput(input);
+                        }
+                    } else {
+                        if (input.type === 'number' || input.type === 'text') {
+                            input.value = '';
+                        } else if (input.type === 'select-one') {
+                            input.selectedIndex = 0;
+                        }
+                    }
+                });
+                updateTotals();
+            } catch (error) {
+                console.error("Error loading data:", error);
+            }
+        }
+
+        function loadSpecialization(spec) {
+            console.log("Switching to specialization:", spec);
+            if (currentSpec) {
+                saveData(); // Save current spec data before switching
+            }
+            currentSpec = spec;
+            createTable();
+            loadData();
+            document.title = `WoW Gear Tracker - ${spec}`;
+        }
+
+        // Initialize table
+        createTable();
+
+        // Event listeners
+        table.addEventListener('input', function(e) {
+            if (e.target.type === 'number') {
+                updateTotals();
+                highlightStatInput(e.target);
+            }
+            console.log("Input changed, saving data...");
+            saveData();
+        });
+
+        specSelect.addEventListener('change', function(e) {
+            loadSpecialization(e.target.value);
+        });
+
+        // Manual save button
+        document.getElementById('saveButton').addEventListener('click', function() {
+            console.log("Manual save initiated...");
+            saveData();
+        });
+
+        // Save data when the page is about to be unloaded
+        window.addEventListener('beforeunload', function() {
+            console.log("Page unloading, saving data...");
+            saveData();
+        });
+
+        // Initialize stat colors
+        document.querySelectorAll('select').forEach(updateStatColor);
+
+        // Populate specialization dropdown
+        specializations.forEach(spec => {
+            const option = document.createElement('option');
+            option.value = spec;
+            option.textContent = spec;
+            specSelect.appendChild(option);
+        });
+
+        console.log("Script initialized");
+    </script>
+</body>
+</html>
