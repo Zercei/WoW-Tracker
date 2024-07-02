@@ -36,7 +36,29 @@ async function fetchCharacterGear(characterNum) {
     }
 }
 
-// ... (keep getAccessToken function as is) ...
+async function getAccessToken() {
+    try {
+        const response = await fetch(`https://oauth.battle.net/token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: `grant_type=client_credentials&client_id=${clientId}&client_secret=${clientSecret}`
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Authentication error: ${response.status} ${response.statusText}\n${errorText}`);
+        }
+
+        const data = await response.json();
+        console.log('Received access token:', data.access_token);
+        return data.access_token;
+    } catch (error) {
+        console.error('Error in getAccessToken:', error);
+        return null;
+    }
+}
 
 function displayGear(characterNum) {
     const gearBody = document.getElementById('gearBody');
@@ -88,4 +110,48 @@ function displayGear(characterNum) {
     }
 }
 
-// ... (keep getItemStats function as is) ...
+function getItemStats(item) {
+    const stats = {
+        strength: 0,
+        agility: 0,
+        intellect: 0,
+        stamina: 0,
+        crit: 0,
+        haste: 0,
+        mastery: 0,
+        versatility: 0
+    };
+
+    if (item.stats) {
+        item.stats.forEach(stat => {
+            switch (stat.type.type) {
+                case 'STRENGTH':
+                    stats.strength = stat.value;
+                    break;
+                case 'AGILITY':
+                    stats.agility = stat.value;
+                    break;
+                case 'INTELLECT':
+                    stats.intellect = stat.value;
+                    break;
+                case 'STAMINA':
+                    stats.stamina = stat.value;
+                    break;
+                case 'CRIT_RATING':
+                    stats.crit = stat.value;
+                    break;
+                case 'HASTE_RATING':
+                    stats.haste = stat.value;
+                    break;
+                case 'MASTERY_RATING':
+                    stats.mastery = stat.value;
+                    break;
+                case 'VERSATILITY':
+                    stats.versatility = stat.value;
+                    break;
+            }
+        });
+    }
+
+    return stats;
+}
