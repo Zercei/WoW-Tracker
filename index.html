@@ -1,118 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WoW Character Gear Comparison</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-            color: #333;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            text-align: center;
-            color: #4a4a4a;
-        }
-        .input-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        .character-input {
-            width: 48%;
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .character-input h2 {
-            margin-top: 0;
-            color: #2c3e50;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #555;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .fetch-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .fetch-btn:hover {
-            background-color: #2980b9;
-        }
-        .character-header {
-            text-align: center;
-            font-weight: bold;
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #ecf0f1;
-            border-radius: 4px;
-        }
-        #gearTable {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        #gearTable th, #gearTable td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        #gearTable th {
-            background-color: #3498db;
-            color: white;
-        }
-        #gearTable tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-        #gearTable thead tr:last-child th {
-            position: sticky;
-            top: 0;
-            background-color: #3498db;
-            z-index: 10;
-        }
-        #gearTable tfoot {
-            position: sticky;
-            bottom: 0;
-            background-color: #ecf0f1;
-        }
-        #gearTable tfoot td[id^="total"] {
-            font-weight: bold;
-        }
-        #gearTable tfoot td.highlight-crit { background-color: #ffcccb; }
-        #gearTable tfoot td.highlight-haste { background-color: #fffacd; }
-        #gearTable tfoot td.highlight-mastery { background-color: #e6f3ff; }
-        #gearTable tfoot td.highlight-versatility { background-color: #ccffcc; }
-        #gearTable tfoot tr:last-child td {
-            font-style: italic;
-        }
-        .positive { color: green; }
-        .negative { color: red; }
-    </style>
+    <!-- ... (keep the existing head content) ... -->
 </head>
 <body>
     <div class="container">
@@ -125,7 +14,7 @@
                 <input type="text" id="characterName1" value="Zercei">
                 <label for="realm1">Realm:</label>
                 <input type="text" id="realm1" value="Tichondrius">
-                <button class="fetch-btn" onclick="fetchCharacterGear(1)">Fetch Gear</button>
+                <button class="fetch-btn" id="fetchBtn1">Fetch Gear</button>
             </div>
 
             <div class="character-input">
@@ -134,81 +23,11 @@
                 <input type="text" id="characterName2">
                 <label for="realm2">Realm:</label>
                 <input type="text" id="realm2">
-                <button class="fetch-btn" onclick="fetchCharacterGear(2)">Fetch Gear</button>
+                <button class="fetch-btn" id="fetchBtn2">Fetch Gear</button>
             </div>
         </div>
 
-        <div id="characterHeader1" class="character-header"></div>
-        <div id="characterHeader2" class="character-header"></div>
-
-        <table id="gearTable">
-            <thead>
-                <tr>
-                    <th>Slot</th>
-                    <th>Item Name</th>
-                    <th>Item Level</th>
-                    <th>Strength</th>
-                    <th>Agility</th>
-                    <th>Intellect</th>
-                    <th>Stamina</th>
-                    <th>Crit</th>
-                    <th>Haste</th>
-                    <th>Mastery</th>
-                    <th>Versatility</th>
-                </tr>
-            </thead>
-            <tbody id="gearBody">
-                <!-- Gear data will be inserted here -->
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th>Slot</th>
-                    <th>Item Name</th>
-                    <th>Item Level</th>
-                    <th>Strength</th>
-                    <th>Agility</th>
-                    <th>Intellect</th>
-                    <th>Stamina</th>
-                    <th>Crit</th>
-                    <th>Haste</th>
-                    <th>Mastery</th>
-                    <th>Versatility</th>
-                </tr>
-                <tr id="totalRow1">
-                    <td colspan="3">Character 1 Totals:</td>
-                    <td id="totalStrength1">0</td>
-                    <td id="totalAgility1">0</td>
-                    <td id="totalIntellect1">0</td>
-                    <td id="totalStamina1">0</td>
-                    <td id="totalCrit1">0</td>
-                    <td id="totalHaste1">0</td>
-                    <td id="totalMastery1">0</td>
-                    <td id="totalVersatility1">0</td>
-                </tr>
-                <tr id="totalRow2">
-                    <td colspan="3">Character 2 Totals:</td>
-                    <td id="totalStrength2">0</td>
-                    <td id="totalAgility2">0</td>
-                    <td id="totalIntellect2">0</td>
-                    <td id="totalStamina2">0</td>
-                    <td id="totalCrit2">0</td>
-                    <td id="totalHaste2">0</td>
-                    <td id="totalMastery2">0</td>
-                    <td id="totalVersatility2">0</td>
-                </tr>
-                <tr id="diffRow">
-                    <td colspan="3">Difference (Character 2 - Character 1):</td>
-                    <td id="diffStrength">0</td>
-                    <td id="diffAgility">0</td>
-                    <td id="diffIntellect">0</td>
-                    <td id="diffStamina">0</td>
-                    <td id="diffCrit">0</td>
-                    <td id="diffHaste">0</td>
-                    <td id="diffMastery">0</td>
-                    <td id="diffVersatility">0</td>
-                </tr>
-            </tfoot>
-        </table>
+        <!-- ... (keep the rest of the body content) ... -->
     </div>
 
     <script src="app.js"></script>
