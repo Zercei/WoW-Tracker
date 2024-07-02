@@ -106,41 +106,7 @@ function displayGear(characterNum) {
 
     // Update total row
     for (let stat in statTotals[characterNum]) {
-        const element = document.getElementById(`total${stat.charAt(0).toUpperCase() + stat.slice(1)}${characterNum}`);
-        element.textContent = statTotals[characterNum][stat];
-        
-        // Add highlighting
-        element.className = ''; // Reset class
-        if (statTotals[characterNum][stat] > 0) {
-            switch(stat) {
-                case 'crit':
-                    element.classList.add('highlight-crit');
-                    break;
-                case 'haste':
-                    element.classList.add('highlight-haste');
-                    break;
-                case 'mastery':
-                    element.classList.add('highlight-mastery');
-                    break;
-                case 'versatility':
-                    element.classList.add('highlight-versatility');
-                    break;
-            }
-        }
-    }
-
-    // Calculate and display differences if both characters have been loaded
-    if (gearData[1].equipped_items && gearData[2].equipped_items) {
-        calculateDifferences();
-    }
-}
-
-function calculateDifferences() {
-    for (let stat in statTotals[1]) {
-        const diff = statTotals[2][stat] - statTotals[1][stat];
-        const element = document.getElementById(`diff${stat.charAt(0).toUpperCase() + stat.slice(1)}`);
-        element.textContent = diff > 0 ? `+${diff}` : diff;
-        element.className = diff > 0 ? 'positive' : (diff < 0 ? 'negative' : '');
+        document.getElementById(`total${stat.charAt(0).toUpperCase() + stat.slice(1)}${characterNum}`).textContent = statTotals[characterNum][stat];
     }
 }
 
@@ -170,10 +136,22 @@ function getItemStats(item) {
                     break;
                 case 'STAMINA':
                     stats.stamina = stat.value;
-// ... (keep the existing code) ...
+                    break;
+                case 'CRIT_RATING':
+                    stats.crit = stat.value;
+                    break;
+                case 'HASTE_RATING':
+                    stats.haste = stat.value;
+                    break;
+                case 'MASTERY_RATING':
+                    stats.mastery = stat.value;
+                    break;
+                case 'VERSATILITY':
+                    stats.versatility = stat.value;
+                    break;
+            }
+        });
+    }
 
-// Add this at the end of the file
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('fetchBtn1').addEventListener('click', () => fetchCharacterGear(1));
-    document.getElementById('fetchBtn2').addEventListener('click', () => fetchCharacterGear(2));
-});
+    return stats;
+}
