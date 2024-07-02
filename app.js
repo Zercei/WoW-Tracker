@@ -170,3 +170,10 @@ function getItemStats(item) {
                     break;
                 case 'STAMINA':
                     stats.stamina = stat.value;
+// ... (keep the existing code) ...
+
+// Add this at the end of the file
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('fetchBtn1').addEventListener('click', () => fetchCharacterGear(1));
+    document.getElementById('fetchBtn2').addEventListener('click', () => fetchCharacterGear(2));
+});
