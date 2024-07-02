@@ -1,69 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WoW Character Gear Stats</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0 auto;
-            padding: 20px;
-            max-width: 1200px;
-        }
-        #gearTable {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        .fetch-btn {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .input-section {
-            margin-bottom: 20px;
-        }
-        .input-section label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        .input-section input {
-            padding: 5px;
-            width: 100%;
-        }
-        .character-header {
-            text-align: center;
-            font-weight: bold;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-    </style>
+    <!-- ... (keep the existing head content) ... -->
 </head>
 <body>
-    <h1>WoW Character Gear Stats</h1>
+    <h1>WoW Character Gear Stats Comparison</h1>
 
     <div class="input-section">
-        <h2>Character</h2>
-        <label for="characterName">Character Name:</label>
-        <input type="text" id="characterName" value="Zercei">
-        <label for="realm">Realm:</label>
-        <input type="text" id="realm" value="Tichondrius">
-        <button class="fetch-btn" onclick="fetchCharacterGear()">Fetch Gear</button>
+        <h2>Character 1</h2>
+        <label for="characterName1">Character Name:</label>
+        <input type="text" id="characterName1" value="Zercei">
+        <label for="realm1">Realm:</label>
+        <input type="text" id="realm1" value="Tichondrius">
+        <button class="fetch-btn" onclick="fetchCharacterGear(1)">Fetch Gear</button>
     </div>
 
-    <div id="characterHeader" class="character-header"></div>
+    <div class="input-section">
+        <h2>Character 2</h2>
+        <label for="characterName2">Character Name:</label>
+        <input type="text" id="characterName2">
+        <label for="realm2">Realm:</label>
+        <input type="text" id="realm2">
+        <button class="fetch-btn" onclick="fetchCharacterGear(2)">Fetch Gear</button>
+    </div>
+
+    <div id="characterHeader1" class="character-header"></div>
+    <div id="characterHeader2" class="character-header"></div>
 
     <table id="gearTable">
         <thead>
@@ -84,17 +46,28 @@
         <tbody id="gearBody">
             <!-- Gear data will be inserted here -->
         </tbody>
-        <tfoot id="statsTotals">
-            <tr>
-                <td colspan="3">Totals:</td>
-                <td id="totalStrength">0</td>
-                <td id="totalAgility">0</td>
-                <td id="totalIntellect">0</td>
-                <td id="totalStamina">0</td>
-                <td id="totalCrit">0</td>
-                <td id="totalHaste">0</td>
-                <td id="totalMastery">0</td>
-                <td id="totalVersatility">0</td>
+        <tfoot>
+            <tr id="totalRow1">
+                <td colspan="3">Character 1 Totals:</td>
+                <td id="totalStrength1">0</td>
+                <td id="totalAgility1">0</td>
+                <td id="totalIntellect1">0</td>
+                <td id="totalStamina1">0</td>
+                <td id="totalCrit1">0</td>
+                <td id="totalHaste1">0</td>
+                <td id="totalMastery1">0</td>
+                <td id="totalVersatility1">0</td>
+            </tr>
+            <tr id="totalRow2">
+                <td colspan="3">Character 2 Totals:</td>
+                <td id="totalStrength2">0</td>
+                <td id="totalAgility2">0</td>
+                <td id="totalIntellect2">0</td>
+                <td id="totalStamina2">0</td>
+                <td id="totalCrit2">0</td>
+                <td id="totalHaste2">0</td>
+                <td id="totalMastery2">0</td>
+                <td id="totalVersatility2">0</td>
             </tr>
         </tfoot>
     </table>
