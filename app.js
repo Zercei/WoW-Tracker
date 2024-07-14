@@ -8,7 +8,7 @@ let statTotals = {
     2: { strength: 0, agility: 0, intellect: 0, stamina: 0, crit: 0, haste: 0, mastery: 0, versatility: 0 }
 };
 
-async function fetchCharacterGear(characterNum) {
+async function fetchComparisonGear(characterNum) {
     const characterName = document.getElementById(`characterName${characterNum}`).value.toLowerCase();
     const realm = document.getElementById(`realm${characterNum}`).value.toLowerCase();
 
@@ -31,7 +31,7 @@ async function fetchCharacterGear(characterNum) {
         gearData[characterNum] = data;
         displayGear(characterNum);
     } catch (error) {
-        console.error(`Error in fetchCharacterGear for Character ${characterNum}:`, error);
+        console.error(`Error in fetchComparisonGear for Character ${characterNum}:`, error);
         alert(`Error fetching gear data for Character ${characterNum}: ${error.message}`);
     }
 }
@@ -156,8 +156,7 @@ function getItemStats(item) {
     return stats;
 }
 
-// New function for individual character gear
-async function fetchCharacterGear() {
+async function fetchIndividualGear() {
     const characterName = document.getElementById('characterName').value.toLowerCase();
     const realm = document.getElementById('realm').value.toLowerCase();
 
@@ -179,7 +178,7 @@ async function fetchCharacterGear() {
         console.log('Received data:', data);
         displayIndividualGear(data);
     } catch (error) {
-        console.error('Error in fetchCharacterGear:', error);
+        console.error('Error in fetchIndividualGear:', error);
         alert(`Error fetching gear data: ${error.message}`);
     }
 }
