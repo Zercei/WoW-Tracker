@@ -60,41 +60,89 @@ async function getAccessToken() {
     }
 }
 
-function displayGear(characterNum) {
+// ... (keep existing code)
+
+function displayIndividualGear(data) {
     const gearBody = document.getElementById('gearBody');
-    if (characterNum === 1) {
-        gearBody.innerHTML = ''; // Clear only for the first character
+    gearBody.innerHTML = ''; // Clear existing data
+
+    const charHeader = document.getElementById('characterHeader');
+    charHeader.innerText = `${data.character.name} - Level ${data.character.level}`;
+
+    let statTotals = {
+        itemLevel: 0, strength: 0, agility: 0, intellect: 0, stamina: 0,
+        crit: 0, haste: 0, mastery: 0, versatility: 0
+    };
+
+    data.equipped_items.forEach(item => {
+        const row = document.createElement('tr');
+        const stats = getItemStats(item);
+        
+        row.innerHTML = `
+            <td>${item.slot.type}</td>
+            <td>${item.name}</td>
+            <td>${item.level.value}</td>
+            <td>${stats.strength}</td>
+            <td>${stats.agility}</td>
+            <td>${stats.intellect}</td>
+            <td>${stats.stamina}</td>
+            <td>${stats.crit}</td>
+            <td>${stats.haste}</td>
+            <td>${stats.mastery}</td>
+            <td>${stats.versatility}</td>
+            <td><input type="text" class="wish-list-input" placeholder="Wish list item" onchange="updateWishList('${item.slot.type}', this.value)"></td>
+        `;
+        gearBody.appendChild(row);
+
+        // Update totals
+        statTotals.itemLevel += item.level.value;
+        for (let stat in stats) {
+            statTotals[stat] += stats[stat];
+        }
+    });
+
+    // Update total row
+    document.getElementById('totalItemLevel').textContent = Math.floor(statTotals.itemLevel / data.equipped_items.length);
+    for (let stat in statTotals) {
+        if (stat !== 'itemLevel') {
+            document.getElementById(`total${stat.charAt(0).toUpperCase() + stat.slice(1)}`).textContent = statTotals[stat];
+        }
     }
 
-    // Reset stat totals for this character
-    for (let stat in statTotals[characterNum]) {
-        statTotals[characterNum][stat] = 0;
-    }
+    // Load wish list from localStorage
+    loadWishList();
+}
 
-    const charHeader = document.getElementById(`characterHeader${characterNum}`);
-    charHeader.innerText = `Character ${characterNum}: ${gearData[characterNum].character.name} - Level ${gearData[characterNum].character.level}`;
+function updateWishList(slot, item) {
+    let wishList = JSON.parse(localStorage.getItem('wishList')) || {};
+    wishList[slot] = item;
+    localStorage.setItem('wishList', JSON.stringify(wishList));
+    highlightWishListItems();
+}
 
-    if (characterNum === 1) {
-        gearData[characterNum].equipped_items.forEach(item => {
-            const row = document.createElement('tr');
-            const stats = getItemStats(item);
-            
-            row.innerHTML = `
-                <td>${item.slot.type}</td>
-                <td>${item.name}</td>
-                <td>${item.level.value}</td>
-                <td>${stats.strength}</td>
-                <td>${stats.agility}</td>
-                <td>${stats.intellect}</td>
-                <td>${stats.stamina}</td>
-                <td>${stats.crit}</td>
-                <td>${stats.haste}</td>
-                <td>${stats.mastery}</td>
-                <td>${stats.versatility}</td>
-            `;
-            gearBody.appendChild(row);
-        });
+function loadWishList() {
+    let wishList = JSON.parse(localStorage.getItem('wishList')) || {};
+    for (let slot in wishList) {
+        let input = document.querySelector(`tr td:first-child:contains('${slot}') + td + td + td + td + td + td + td + td + td + td + td input`);
+        if (input) {
+            input.value = wishList[slot];
+        }
     }
+    highlightWishListItems();
+}
+
+function highlightWishListItems() {
+    let inputs = document.querySelectorAll('.wish-list-input');
+    inputs.forEach(input => {
+        if (input.value.trim() !== '') {
+            input.parentElement.parentElement.classList.add('wish-list-item');
+        } else {
+            input.parentElement.parentElement.classList.remove('wish-list-item');
+        }
+    });
+}
+
+// ... (keep existing code)
 
     // Calculate totals
     gearData[characterNum].equipped_items.forEach(item => {
