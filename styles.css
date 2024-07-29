@@ -50,3 +50,13 @@ th {
     font-weight: bold;
     margin-bottom: 10px;
 }
+.wish-list-input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.wish-list-item {
+    background-color: #f0f8ff;
+}
