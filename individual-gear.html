@@ -28,7 +28,7 @@
             <thead>
                 <tr>
                     <th>Slot</th>
-                    <th>Item Name</th>
+                    <th>Current Item</th>
                     <th>Item Level</th>
                     <th>Strength</th>
                     <th>Agility</th>
@@ -38,12 +38,14 @@
                     <th>Haste</th>
                     <th>Mastery</th>
                     <th>Versatility</th>
+                    <th>Wish List Item</th>
                 </tr>
             </thead>
             <tbody id="gearBody"></tbody>
             <tfoot>
                 <tr>
-                    <td colspan="3">Totals:</td>
+                    <td colspan="2">Totals:</td>
+                    <td id="totalItemLevel">0</td>
                     <td id="totalStrength">0</td>
                     <td id="totalAgility">0</td>
                     <td id="totalIntellect">0</td>
@@ -52,6 +54,7 @@
                     <td id="totalHaste">0</td>
                     <td id="totalMastery">0</td>
                     <td id="totalVersatility">0</td>
+                    <td></td>
                 </tr>
             </tfoot>
         </table>
